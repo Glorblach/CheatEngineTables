@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="34">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>1</ID>
+      <Description>"Achievements"</Description>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : imperator.exe
+  Version: 
+  Date   : 2021-02-18
+  Author : Nameless
+  Version: 0.1 BETA
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(aob_achievements,$process,88 88 FA 00 00 00) // should be unique
+aobscanmodule(aob_checksum_a,$process,80 B9 F9 00 00 00 00 74 25)
+aobscanmodule(aob_checksum_b,$process,0F 94 C0 20 87 F9 00 00 00)
+aobscanmodule(aob_checksum_c,$process,80 B9 F9 00 00 00 00 48)
+
+alloc(achievements,$2000,$process)
+
+label(set_achievement)
+label(return_set_achievement)
+label(set_checksum_a)
+label(return_set_checksum_a)
+label(set_checksum_b)
+label(return_set_checksum_b)
+label(set_checksum_c)
+label(return_set_checksum_c)
+
+label(pAchievementBase)
+
+registersymbol(set_achievement)
+registersymbol(return_set_achievement)
+registersymbol(set_checksum_a)
+registersymbol(return_set_checksum_a)
+registersymbol(set_checksum_b)
+registersymbol(return_set_checksum_b)
+registersymbol(set_checksum_c)
+registersymbol(return_set_checksum_c)
+registersymbol(pAchievementBase)
+registersymbol(aob_achievements)
+registersymbol(aob_checksum_a)
+registersymbol(aob_checksum_b)
+registersymbol(aob_checksum_c)
+achievements:
+
+set_achievement:
+  mov [pAchievementBase],rax
+  mov byte ptr [rax+000000F8],1
+  mov byte ptr [rax+000000F9],1
+  mov byte ptr [rax+000000FA],1
+  mov byte ptr [rax+000000FB],1
+  mov byte ptr [rax+000000FA],cl // original code
+  jmp return_set_achievement
+
+set_checksum_a:
+  mov [pAchievementBase],rcx
+  mov byte ptr [rcx+000000F8],1
+  mov byte ptr [rcx+000000F9],1
+  mov byte ptr [rcx+000000FA],1
+  mov byte ptr [rcx+000000FB],1
+  cmp byte ptr [rcx+000000F9],00 // original code
+  jmp return_set_checksum_a
+  
+set_checksum_b:
+  mov [pAchievementBase],rdi
+  mov byte ptr [rdi+000000F8],1
+  mov byte ptr [rdi+000000F9],1
+  mov byte ptr [rdi+000000FA],1
+  mov byte ptr [rdi+000000FB],1
+  sete al 				// original code
+  and [rdi+000000F9],al // original code
+  jmp return_set_checksum_b
+  
+set_checksum_c:
+  mov [pAchievementBase],rcx
+  mov byte ptr [rcx+000000F8],1
+  mov byte ptr [rcx+000000F9],1
+  mov byte ptr [rcx+000000FA],1
+  mov byte ptr [rcx+000000FB],1
+  cmp byte ptr [rcx+000000F9],00 // original code
+  jmp return_set_checksum_c
+  
+  
+///////////////
+// Variables //
+///////////////
+
+pAchievementBase:
+  dq 0
+
+pAchievementBase2:
+  dq 0
+
+aob_achievements:
+  jmp set_achievement
+  nop
+return_set_achievement:
+
+aob_checksum_a:
+  jmp set_checksum_a
+  nop 2
+return_set_checksum_a:
+
+aob_checksum_b:
+  jmp set_checksum_b
+  nop 4
+return_set_checksum_b:
+
+aob_checksum_c:
+  jmp set_checksum_c
+  nop 2
+return_set_checksum_c:
+
+[DISABLE]
+
+aob_achievements:
+  db 88 88 FA 00 00 00
+ 
+aob_checksum_a:
+  db 80 B9 F9 00 00 00 00
+  
+aob_checksum_b:
+  db 0F 94 C0 20 87 F9 00 00 00
+  
+aob_checksum_c:
+  db 80 B9 F9 00 00 00 00
+  
+unregistersymbol(set_achievement)
+unregistersymbol(return_set_achievement)
+unregistersymbol(set_checksum_a)
+unregistersymbol(return_set_checksum_a)
+unregistersymbol(set_checksum_b)
+unregistersymbol(return_set_checksum_b)
+unregistersymbol(set_checksum_c)
+unregistersymbol(return_set_checksum_c)
+unregistersymbol(pAchievementBase)
+unregistersymbol(aob_achievements)
+unregistersymbol(aob_checksum_a)
+unregistersymbol(aob_checksum_b)
+unregistersymbol(aob_checksum_c)
+dealloc(achievements)
+
+{
+// ORIGINAL CODE - INJECTION POINT: imperator.exe+72C76B
+
+imperator.exe+72C740: 72 03                 - jb imperator.exe+72C745
+imperator.exe+72C742: 48 8B 12              - mov rdx,[rdx]
+imperator.exe+72C745: 49 C7 C0 FF FF FF FF  - mov r8,FFFFFFFFFFFFFFFF
+imperator.exe+72C74C: 0F 1F 40 00           - nop dword ptr [rax+00]
+imperator.exe+72C750: 49 FF C0              - inc r8
+imperator.exe+72C753: 42 80 3C 02 00        - cmp byte ptr [rdx+r8],00
+imperator.exe+72C758: 75 F6                 - jne imperator.exe+72C750
+imperator.exe+72C75A: E8 71 3E AE FF        - call imperator.exe+2105D0
+imperator.exe+72C75F: E8 4C 0F 78 00        - call imperator.exe+EAD6B0
+imperator.exe+72C764: 0F B6 8B DD 02 00 00  - movzx ecx,byte ptr [rbx+000002DD]
+// ---------- INJECTING HERE ----------
+imperator.exe+72C76B: 88 88 FA 00 00 00     - mov [rax+000000FA],cl
+// ---------- DONE INJECTING  ----------
+imperator.exe+72C771: 48 83 C4 20           - add rsp,20
+imperator.exe+72C775: 5B                    - pop rbx
+imperator.exe+72C776: C3                    - ret 
+imperator.exe+72C777: CC                    - int 3 
+imperator.exe+72C778: CC                    - int 3 
+imperator.exe+72C779: CC                    - int 3 
+imperator.exe+72C77A: CC                    - int 3 
+imperator.exe+72C77B: CC                    - int 3 
+imperator.exe+72C77C: CC                    - int 3 
+imperator.exe+72C77D: CC                    - int 3 
+}
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>12000</ID>
+          <Description>"Debug"</Description>
+          <Options moHideChildren="1"/>
+          <LastState Value="" Activated="1" RealAddress="00000000"/>
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>12001</ID>
+              <Description>"Achievement base pointer"</Description>
+              <LastState Value="0000023A4F4E17A0" RealAddress="7FF7CFEC0015"/>
+              <ShowAsHex>1</ShowAsHex>
+              <VariableType>8 Bytes</VariableType>
+              <Address>pAchievementBase</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>12002</ID>
+              <Description>"Achievements (F8) Unknown"</Description>
+              <LastState Value="1" RealAddress="23A4F4E189A"/>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>Byte</VariableType>
+              <Address>pAchievementBase</Address>
+              <Offsets>
+                <Offset>F8</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>12003</ID>
+              <Description>"Achievements (F9) NAC Achievements"</Description>
+              <LastState Value="1" RealAddress="23A4F4E189A"/>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>Byte</VariableType>
+              <Address>pAchievementBase</Address>
+              <Offsets>
+                <Offset>F9</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>12004</ID>
+              <Description>"Achievements (FA) Ironman"</Description>
+              <LastState Value="1" RealAddress="23A4F4E189A"/>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>Byte</VariableType>
+              <Address>pAchievementBase</Address>
+              <Offsets>
+                <Offset>FA</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>12005</ID>
+              <Description>"Achievements (FB) Unknown"</Description>
+              <LastState Value="1" RealAddress="23A4F4E189A"/>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>Byte</VariableType>
+              <Address>pAchievementBase</Address>
+              <Offsets>
+                <Offset>FB</Offset>
+              </Offsets>
+            </CheatEntry>
+		  </CheatEntries>
+		</CheatEntry>
+	  </CheatEntries>
+
+
+    </CheatEntry>
+  </CheatEntries>
+  <UserdefinedSymbols/>
+</CheatTable>
