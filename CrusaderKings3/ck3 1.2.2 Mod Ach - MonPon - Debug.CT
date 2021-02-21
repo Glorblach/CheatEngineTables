@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="34">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>7</ID>
+      <Description>"Achievements"</Description>
+      <LastState Activated="1"/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{
+  Version: 
+  Date   : 2020-12-28
+  Author : Nameless
+
+  This script does blah blah blah
+}
+
+[ENABLE]
+
+aobscanmodule(aob_set_ironman,$process, 88 98 FA 00 00 00 C7 44 24) // when setting ironman in game rules (FA)
+aobscanmodule(aob_checksum_a, $process, 80 B9 F9 00 00 00 00 48 8B DA 75 57 33) // Second check when starting a game (skipped first one, a movzx...)
+aobscanmodule(aob_checksum_b, $process, 80 B8 F9 00 00 00 00 74 0B B3 01) // third check when starting a game
+aobscanmodule(aob_checksum_c, $process, 80 B9 F9 00 00 00 00 74 25 48 8B 81 D0) // fourth check (skipped movzx, first check (12k hits) and the "and [rdi..."
+aobscanmodule(aob_checksum_d, $process, 80 B8 F9 00 00 00 00 74 64 48 85 DB) // First check (12k hits)
+aobscanmodule(aob_checksum_e, $process, 0F 94 C0 20 87 F9 00 00 00) // sete al, and [rdi...
+aobscanmodule(aob_checksum_f, $process, 0F B6 88 F9 00 00 00 88 4C 24 48 48 8B CB) // movzx...
+
+alloc(achievements,$2000,$process)
+
+label(set_ironman)
+label(return_set_ironman)
+label(set_checksum_a)
+label(return_checksum_a)
+label(set_checksum_b)
+label(return_checksum_b)
+label(set_checksum_c)
+label(return_checksum_c)
+label(set_checksum_d)
+label(return_checksum_d)
+label(set_checksum_e)
+label(return_checksum_e)
+label(set_checksum_f)
+label(return_checksum_f)
+
+label(pAchievementBase)
+
+registersymbol(set_ironman)
+registersymbol(return_set_ironman)
+registersymbol(set_checksum_a)
+registersymbol(return_checksum_a)
+registersymbol(set_checksum_b)
+registersymbol(return_checksum_b)
+registersymbol(set_checksum_c)
+registersymbol(return_checksum_c)
+registersymbol(set_checksum_d)
+registersymbol(return_checksum_d)
+registersymbol(set_checksum_e)
+registersymbol(return_checksum_e)
+registersymbol(set_checksum_f)
+registersymbol(return_checksum_f)
+
+registersymbol(aob_set_ironman)
+registersymbol(aob_checksum_a)
+registersymbol(aob_checksum_b)
+registersymbol(aob_checksum_c)
+registersymbol(aob_checksum_d)
+registersymbol(aob_checksum_e)
+registersymbol(aob_checksum_f)
+
+registersymbol(pAchievementBase)
+
+achievements:
+
+set_ironman: // FA
+  mov [pAchievementBase],rax
+  //mov [rax+000000FA],bl // original code
+  mov [rax+000000FA],1
+  mov [rax+000000F8],1
+  mov [rax+000000F9],1
+  mov [rax+000000FB],1
+  jmp return_set_ironman
+
+set_checksum_a:
+  mov [pAchievementBase],rcx
+  mov [rcx+000000F8],1
+  mov [rcx+000000F9],1
+  mov [rcx+000000FA],1
+  mov [rcx+000000FB],1
+  cmp byte ptr [rcx+000000F9],00 // original code
+  jmp return_checksum_a
+
+set_checksum_b:
+  mov [pAchievementBase],rax
+  mov [rax+000000F8],1
+  mov [rax+000000F9],1
+  mov [rax+000000FA],1
+  mov [rax+000000FB],1
+  cmp byte ptr [rax+000000F9],00 // original code
+  jmp return_checksum_b
+
+set_checksum_c:
+  mov [pAchievementBase],rcx
+  mov [rcx+000000F8],1
+  mov [rcx+000000F9],1
+  mov [rcx+000000FA],1
+  mov [rcx+000000FB],1
+  cmp byte ptr [rcx+000000F9],00 // original code
+  jmp return_checksum_c
+
+set_checksum_d:
+  mov [pAchievementBase],rax
+  mov [rax+000000F8],1
+  mov [rax+000000F9],1
+  mov [rax+000000FA],1
+  mov [rax+000000FB],1
+  cmp byte ptr [rax+000000F9],00 // original code
+  jmp return_checksum_d
+
+set_checksum_e:
+  mov [pAchievementBase],rdi
+  mov [rdi+000000F8],1
+  mov [rdi+000000F9],1
+  mov [rdi+000000FA],1
+  mov [rdi+000000FB],1
+  sete al				// original code
+  and [rdi+000000F9],al // original code
+  jmp return_checksum_e
+
+set_checksum_f:
+  mov [pAchievementBase],rax
+  mov [rax+000000F8],1
+  mov [rax+000000F9],1
+  mov [rax+000000FA],1
+  mov [rax+000000FB],1
+  movzx ecx,byte ptr [rax+000000F9] // original code
+  jmp return_checksum_f
+
+///////////////
+// Variables //
+///////////////
+
+pAchievementBase:
+  dq 0
+	
+///////////////////
+// Inject points //
+///////////////////
+
+aob_set_ironman:
+  jmp set_ironman
+  nop
+return_set_ironman:
+
+aob_checksum_a:
+  jmp set_checksum_a
+  nop 2
+return_checksum_a:
+
+aob_checksum_b:
+  jmp set_checksum_b
+  nop 2
+return_checksum_b:
+
+aob_checksum_c:
+  jmp set_checksum_c
+  nop 2
+return_checksum_c:
+
+aob_checksum_d:
+  jmp set_checksum_d
+  nop 2
+return_checksum_d:
+
+aob_checksum_e:
+  jmp set_checksum_e
+  nop 4
+return_checksum_e:
+
+aob_checksum_f:
+  jmp set_checksum_f
+  nop 2
+return_checksum_f:
+
+[DISABLE]
+
+aob_set_ironman:
+  db 88 98 FA 00 00 00
+
+aob_checksum_a:
+  db 80 B9 F9 00 00 00 00
+
+aob_checksum_b:
+  db 80 B8 F9 00 00 00 00
+
+aob_checksum_c:
+  db 80 B9 F9 00 00 00 00
+
+aob_checksum_d:
+  db 80 B8 F9 00 00 00 00
+
+aob_checksum_e:
+  db 0F 94 C0 20 87 F9 00 00 00
+
+aob_checksum_f:
+  db 0F B6 88 F9 00 00 00
+
+// Cleanup
+
+unregistersymbol(set_checksum_f)
+unregistersymbol(return_checksum_f)
+unregistersymbol(set_checksum_e)
+unregistersymbol(return_checksum_e)
+unregistersymbol(set_checksum_d)
+unregistersymbol(return_checksum_d)
+unregistersymbol(set_checksum_c)
+unregistersymbol(return_checksum_c)
+unregistersymbol(set_checksum_b)
+unregistersymbol(return_checksum_b)
+unregistersymbol(set_checksum_a)
+unregistersymbol(return_checksum_a)
+unregistersymbol(set_ironman)
+unregistersymbol(return_set_ironman)
+
+unregistersymbol(aob_set_ironman)
+unregistersymbol(aob_checksum_a)
+unregistersymbol(aob_checksum_b)
+unregistersymbol(aob_checksum_c)
+unregistersymbol(aob_checksum_d)
+unregistersymbol(aob_checksum_e)
+unregistersymbol(aob_checksum_f)
+
+unregistersymbol(pAchievementBase)
+
+dealloc(achievements)
+
+{
+// ORIGINAL CODE - INJECTION POINT: $process+2AF665
+
+$process+2AF644: 48 83 C4 20              - add rsp,20
+$process+2AF648: 5F                       - pop rdi
+$process+2AF649: E9 02 6C F8 00           - jmp $process+1236250
+$process+2AF64E: CC                       - int 3 
+$process+2AF64F: CC                       - int 3 
+$process+2AF650: 40 53                    - push rbx
+$process+2AF652: 48 83 EC 20              - sub rsp,20
+$process+2AF656: 0F B6 D9                 - movzx ebx,cl
+$process+2AF659: E8 12 E4 17 01           - call $process+142DA70
+$process+2AF65E: 48 8B 0D D3 AF 4E 02     - mov rcx,[$process+279A638]
+// ---------- INJECTING HERE ----------
+$process+2AF665: 88 98 FA 00 00 00        - mov [rax+000000FA],bl
+// ---------- DONE INJECTING  ----------
+$process+2AF66B: C7 44 24 38 4C 34 00 00  - mov [rsp+38],0000344C
+$process+2AF673: 88 5C 24 3C              - mov [rsp+3C],bl
+$process+2AF677: 48 85 C9                 - test rcx,rcx
+$process+2AF67A: 74 0E                    - je $process+2AF68A
+$process+2AF67C: 48 8B 01                 - mov rax,[rcx]
+$process+2AF67F: 48 8D 54 24 38           - lea rdx,[rsp+38]
+$process+2AF684: FF 90 98 00 00 00        - call qword ptr [rax+00000098]
+$process+2AF68A: 48 83 C4 20              - add rsp,20
+$process+2AF68E: 5B                       - pop rbx
+$process+2AF68F: C3                       - ret 
+}
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>12000</ID>
+          <Description>"Debug"</Description>
+          <Options moHideChildren="0"/>
+          <LastState Value="" Activated="1" RealAddress="00000000"/>
+          <GroupHeader>1</GroupHeader>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>12001</ID>
+              <Description>"Ironman pointer"</Description>
+              <LastState Value="0000023A4F4E17A0" RealAddress="7FF7CFEC0015"/>
+              <ShowAsHex>1</ShowAsHex>
+              <VariableType>8 Bytes</VariableType>
+              <Address>pAchievementBase</Address>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>12002</ID>
+              <Description>"Ironman Enabled FA"</Description>
+              <LastState Value="1" RealAddress="23A4F4E189A"/>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>Byte</VariableType>
+              <Address>pAchievementBase</Address>
+              <Offsets>
+                <Offset>FA</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>12003</ID>
+              <Description>"Checksum A F9"</Description>
+              <LastState Value="1" RealAddress="23A4F4E189A"/>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>Byte</VariableType>
+              <Address>pAchievementBase</Address>
+              <Offsets>
+                <Offset>F9</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>12004</ID>
+              <Description>"Checksum B (on load) F8"</Description>
+              <LastState Value="1" RealAddress="23A4F4E189A"/>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>Byte</VariableType>
+              <Address>pAchievementBase</Address>
+              <Offsets>
+                <Offset>F8</Offset>
+              </Offsets>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>12005</ID>
+              <Description>"Possibly on new game FB"</Description>
+              <LastState Value="1" RealAddress="23A4F4E189A"/>
+              <ShowAsSigned>0</ShowAsSigned>
+              <VariableType>Byte</VariableType>
+              <Address>pAchievementBase</Address>
+              <Offsets>
+                <Offset>FB</Offset>
+              </Offsets>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+	<CheatEntry>
+	  <ID>12006</ID>
+	  <Description>"Max Monarch Points"</Description>
+	  <LastState Value="1" RealAddress="23A4F4E189A"/>
+	  <ShowAsSigned>0</ShowAsSigned>
+	  <VariableType>4 Bytes</VariableType>
+	  <Address>ck3.exe+2798F5C</Address>
+	</CheatEntry>
+	<CheatEntry>
+	  <ID>12007</ID>
+	  <Description>"Debug mode"</Description>
+	  <LastState Value="1" RealAddress="23A4F4E189A"/>
+	  <ShowAsSigned>0</ShowAsSigned>
+	  <VariableType>Byte</VariableType>
+	  <Address>ck3.exe+2799073</Address>
+	</CheatEntry>
+  </CheatEntries>
+  <UserdefinedSymbols/>
+</CheatTable>
